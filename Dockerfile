@@ -28,7 +28,7 @@ ENV APP_NAME="TestCenterEquipmentDatabase" \
     APP_ENV=production \
     APP_DEBUG=false
 
-# copy entrypoint files
+# copy entrypoint files and convert line endings to unix
 COPY ./docker/docker-php-* /usr/local/bin/
 RUN dos2unix /usr/local/bin/docker-php-entrypoint
 RUN dos2unix /usr/local/bin/docker-php-entrypoint-dev
@@ -40,6 +40,9 @@ COPY ./docker/default.conf /etc/nginx/conf.d/default.conf
 # copy application code
 WORKDIR /var/www/app
 COPY ./src .
+
+RUN composer install
+
 RUN composer dump-autoload -o \
     && chown -R :www-data /var/www/app \
     && chmod -R 775 /var/www/app/storage /var/www/app/bootstrap/cache
