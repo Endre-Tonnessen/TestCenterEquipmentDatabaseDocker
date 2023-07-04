@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: app.dockerfile
+    working_dir: /var/www
+    volumes:
+      - ./../laravel:/var/www
+    environment:
+      - "DB_PORT=3306"
+      - "DB_HOST=database"
+
+  web:
+    image: nginx:1.14
+    build:
+      context: ./
+      dockerfile: web.dockerfile
+    working_dir: /var/www
+    volumes:
+      - ./../laravel:/var/www
+    ports:
+      - 8080:80
+  
+  database:
+    image: mysql:8.0
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1"
+    ports:
+      - "33061:3306"
+
+volumes:
+  dbdata:

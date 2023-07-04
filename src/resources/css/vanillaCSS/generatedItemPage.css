@@ -1,0 +1,46 @@
+#mainbox{
+    display:flex;
+    flex-direction: column;
+}
+
+.top {
+  display:flex;
+  flex-direction: row;
+}
+
+.top div {
+    display: flex;
+    flex-direction: row;
+    padding:10px;
+}
+
+.childTopLeft {
+  min-height: 50px;
+  margin: 20px;
+  flex: 1;
+
+}
+
+.childTopRight {
+  min-height: 50px;
+  margin: 20px;
+  flex: 1;
+}
+
+.bottom {
+  min-height: 50px;
+  margin: 20px;
+}
+
+.EquipmentImage {
+/*
+    position: absolute;
+    transform: translateX(100px);
+    transform: translateY(25px);
+ */
+    width: 450px;
+    height: 450px;
+    object-fit: cover;
+
+    border: 1px solid red;
+}

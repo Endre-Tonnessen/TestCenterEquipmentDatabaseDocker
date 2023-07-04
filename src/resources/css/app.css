@@ -1,0 +1,30 @@
+
+
+
+@import "./vanillaCSS/generatedItemPage.css";
+@import "./vanillaCSS/Header.css";
+@import "./vanillaCSS/loginRegisterBarStyle.css";
+@import "./vanillaCSS/Main.css";
+@import "./vanillaCSS/scrollableWithFixedHead.css";
+@import "./vanillaCSS/table_style1.css";
+
+
+/* Icons */
+@import '~@fortawesome/fontawesome-free/css/fontawesome';
+@import '~@fortawesome/fontawesome-free/css/solid';
+
+/* More fonts
+@import '~@fortawesome/fontawesome-free/css/regular';
+@import '~@fortawesome/fontawesome-free/css/brands';
+*/
+
+.modal.fade {
+    transition: opacity 0s linear 0s;
+}
+.modal.fade.show {
+    transition: opacity 0s linear 0s;
+}
+.fade {
+    transition: opacity 0s linear 0s;
+}
+

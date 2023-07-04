@@ -1,0 +1,54 @@
+/*
+  Source: https://www.w3schools.com/css/tryit.asp?filename=trycss_table_fancy
+  Modified colour slightly.
+*/
+
+#tableStyle1 {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 75%;
+    margin: 0px;
+}
+
+#tableStyle1
+td, #tableStyle1
+th {
+    cursor: pointer;
+    border: 1px solid #ddd;
+    padding: 8px;
+    overflow: hidden;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+#tableStyle1 tbody tr td {
+    text-align: center;
+}
+
+#tableStyle1
+tr:nth-child(even){background-color: #f2f2f2;}
+
+#tableStyle1
+tr:hover {background-color: #ddd;}
+
+#tableStyle1
+th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    /*background-color: rgb(243, 106, 14);*/
+    background-color: #EE2D24;
+    color: white;
+}
+
+
+/* Used in the administrator page to line up input fields*/
+.formTable  { display: table;      }
+.formTable p {display: table-row;  }
+.formTable p label {display: table-cell;  }
+.formTable p input {display: table-cell;  }
+
+
+.highlight {
+    background-color: yellow;
+}
