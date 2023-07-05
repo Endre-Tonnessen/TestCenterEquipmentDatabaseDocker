@@ -42,13 +42,13 @@ COPY ./docker/default.conf /etc/nginx/conf.d/default.conf
 WORKDIR /var/www/app
 COPY ./src .
 
-
 RUN composer require laravel/ui:^3.0
 
-# RUN composer dump-autoload --no-scripts
+RUN composer dump-autoload --no-scripts
 # RUN php artisan config:clear
-# RUN composer run post-autoload-dump --verbose
+RUN composer run post-autoload-dump --verbose
 
+# RUN composer require laravel/ui
 RUN composer install
 
 RUN composer dump-autoload -o \
