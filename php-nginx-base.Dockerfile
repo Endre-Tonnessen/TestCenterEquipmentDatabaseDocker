@@ -17,6 +17,10 @@ RUN apk update && apk add --no-cache \
     libjpeg-turbo-dev \ 
     npm
 
+# RUN apt-get install php7.2-mbstring
+# RUN apt-get install php7.2-dom
+
+
 # compile native PHP packages
 RUN docker-php-ext-install \
     gd \
