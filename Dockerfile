@@ -41,6 +41,7 @@ COPY ./docker/default.conf /etc/nginx/conf.d/default.conf
 WORKDIR /var/www/app
 COPY ./src .
 
+RUN composer update laravel/ui
 RUN composer install
 
 RUN composer dump-autoload -o \
