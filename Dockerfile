@@ -42,7 +42,7 @@ WORKDIR /var/www/app
 COPY ./src .
 
 RUN composer dump-autoload --no-scripts
-RUN php artisan config:clear
+# RUN php artisan config:clear
 RUN composer run post-autoload-dump --verbose
 
 # RUN composer require laravel/ui
