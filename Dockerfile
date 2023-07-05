@@ -57,6 +57,11 @@ RUN composer dump-autoload -o \
 
 EXPOSE 80
 
+RUN chown -R www-data:www-data /var/www
+# RUN chown -R $USER:www-data storage
+# RUN chown -R $USER:www-data bootstrap/cache
+# RUN chown -R 775 storage
+# RUN chown -R 775 bootstrap/cache
 # Laravel Artisan commands
 # RUN php artisan key:generate
 # RUN php artisan storage:link
@@ -67,6 +72,10 @@ EXPOSE 80
 #    # software-properties-common \
 #    npm
 RUN npm install
+
+RUN chown -R $USER:www-data storage
+RUN chown -R $USER:www-data bootstrap/cache
+
 # Run mix
 #RUN npm run prod
 #
