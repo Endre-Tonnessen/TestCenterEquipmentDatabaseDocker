@@ -41,8 +41,8 @@ COPY ./docker/default.conf /etc/nginx/conf.d/default.conf
 WORKDIR /var/www/app
 COPY ./src .
 
-RUN sudo apt-get install php7.2-mbstring
-RUN sudo apt-get install php7.2-dom
+RUN apt-get install php7.2-mbstring
+RUN apt-get install php7.2-dom
 
 RUN composer require laravel/ui
 RUN composer install
