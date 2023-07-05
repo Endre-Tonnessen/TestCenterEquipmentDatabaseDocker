@@ -32,6 +32,7 @@ ENV APP_NAME="TestCenterEquipmentDatabase" \
 COPY ./docker/docker-php-* /usr/local/bin/
 RUN dos2unix /usr/local/bin/docker-php-entrypoint
 RUN dos2unix /usr/local/bin/docker-php-entrypoint-dev
+RUN chmod a+x /usr/local/bin/docker-php-entrypoint
 
 # copy nginx configuration
 COPY ./docker/nginx.conf /etc/nginx/nginx.conf
@@ -41,11 +42,13 @@ COPY ./docker/default.conf /etc/nginx/conf.d/default.conf
 WORKDIR /var/www/app
 COPY ./src .
 
-RUN composer dump-autoload --no-scripts
-# RUN php artisan config:clear
-RUN composer run post-autoload-dump --verbose
 
-# RUN composer require laravel/ui
+RUN composer require laravel/ui:^3.0
+
+# RUN composer dump-autoload --no-scripts
+# RUN php artisan config:clear
+# RUN composer run post-autoload-dump --verbose
+
 RUN composer install
 
 RUN composer dump-autoload -o \
