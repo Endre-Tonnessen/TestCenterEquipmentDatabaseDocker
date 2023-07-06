@@ -26,7 +26,8 @@ ENV FPM_PM_MAX_CHILDREN=20 \
 # set application environment variables
 ENV APP_NAME="TestCenterEquipmentDatabase" \
     APP_ENV=production \
-    APP_DEBUG=false
+    APP_DEBUG=false \ 
+    CYPRESS_CACHE_FOLDER="/cypress/.cache" 
 
 # copy entrypoint files and convert line endings to unix
 COPY ./docker/docker-php-* /usr/local/bin/
@@ -41,6 +42,8 @@ COPY ./docker/default.conf /etc/nginx/conf.d/default.conf
 # copy application code
 WORKDIR /var/www/app
 COPY ./src .
+# Copy env
+# COPY ./src/.env.example /.env  
 
 RUN composer require laravel/ui:^3.0
 
@@ -57,7 +60,9 @@ RUN composer dump-autoload -o \
 
 EXPOSE 80
 
-RUN chown -R www-data:www-data /var/www
+# RUN chown -R www-data:www-data /var/www
+# This is bad practice for prod server.
+RUN chown -R 777 /var/www 
 # RUN chown -R $USER:www-data storage
 # RUN chown -R $USER:www-data bootstrap/cache
 # RUN chown -R 775 storage
@@ -67,14 +72,22 @@ RUN chown -R www-data:www-data /var/www
 # RUN php artisan storage:link
 # RUN php artisan migrate --force
 
-# Install node
-#RUN apt-get update && apt-get install -y \
-#    # software-properties-common \
-#    npm
-RUN npm install
+
+# RUN mkdir -p $CYPRESS_CACHE_FOLDER
+RUN npm cache clean --force
+RUN npm install cypress -g  --unsafe-perm=true --allow-root cypress
+RUN npm install --production
 
 RUN chown -R $USER:www-data storage
 RUN chown -R $USER:www-data bootstrap/cache
+RUN npm config set cache /tmp --global
+
+# RUN chown -R $USER:$USER /var/www
+# RUN chmod -R 755 /var/www
+# RUN chmod -R 755 storage/*
+# RUN chmod -R 755 bootstrap/*
+
+RUN chown -R www-data:www-data .
 
 # Run mix
 #RUN npm run prod
