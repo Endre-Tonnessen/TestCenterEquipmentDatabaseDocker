@@ -24,6 +24,8 @@ docker exec app-laerdal-database php artisan storage:link
 # docker exec app-laerdal-database npm install
 # docker exec app-laerdal-database npm cache clean --force
 # docker exec app-laerdal-database npm install cypress -g  --unsafe-perm=true --allow-root cypress
+docker exec app-laerdal-database chown -R 1000:1000 "/tmp"
+docker exec app-laerdal-database chown -R 82:82 "/tmp"
 docker exec app-laerdal-database npm install --production
 
 docker exec app-laerdal-database npm run prod
@@ -39,7 +41,9 @@ docker exec app-laerdal-database php artisan migrate # --force
 docker exec app-laerdal-database php artisan db:seed # Initial admin account
 # Run browser?
 
-docker exec app-laerdal-database chmod -R +rwX .
+docker exec app-laerdal-database chown -R www-data:www-data .
+
+# docker exec app-laerdal-database chmod -R +rwX .
 
 
 # Copy files from windows filesystem into the linux subsystem
