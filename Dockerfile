@@ -4,7 +4,7 @@ FROM node:18-alpine as npm_builder
 # ENV NODE_ENV=dev
 WORKDIR /var/www/app
 COPY ./src/package.json ./src/package.lock* ./
-RUN npm install
+RUN npm install --unsafe-perm=true --allow-root
 
 
 FROM testcenterlaerdal/database as composer_stage
@@ -76,7 +76,7 @@ EXPOSE 80
 # RUN chown -R www-data:www-data /var/www
 
 # This is bad practice for prod server.
-RUN chown -R 777 /var/www 
+# RUN chown -R 777 /var/www 
 
 # RUN chown -R $USER:www-data storage
 # RUN chown -R $USER:www-data bootstrap/cache

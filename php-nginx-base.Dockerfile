@@ -15,7 +15,23 @@ RUN apk update && apk add --no-cache \
     freetype-dev \
     $PHPIZE_DEPS \
     libjpeg-turbo-dev \ 
-    npm
+    npm \ 
+    nodejs
+
+# # Install system dependencies
+# RUN apt-get update && apt-get install -y \
+#     build-essential \
+#     git \
+#     curl \
+#     libjpeg-dev \
+#     libfreetype6-dev \
+#     libjpeg62-turbo-dev \
+#     libmcrypt-dev \
+#     libgd-dev \
+#     jpegoptim optipng pngquant gifsicle \
+#     libonig-dev \
+#     libxml2-dev 
+
 
 #RUN apt-get install php7.2-mbstring
 #RUN apt-get install php7.2-dom
@@ -33,6 +49,12 @@ RUN docker-php-ext-install \
 
 # configure packages
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+# RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+#     --with-gd \
+#     --with-jpeg-dir \
+#     --with-png-dir \
+#     --with-zlib-dir
+RUN docker-php-ext-install -j$(nproc) gd
 
 # install additional packages from PECL
 RUN pecl install zip && docker-php-ext-enable zip \
