@@ -1,6 +1,7 @@
 FROM node:18-alpine as npm_builder
 
-ENV NODE_ENV=production
+# ENV NODE_ENV=production
+# ENV NODE_ENV=dev
 WORKDIR /var/www/app
 COPY ./src/package.json ./src/package.lock* ./
 RUN npm install
