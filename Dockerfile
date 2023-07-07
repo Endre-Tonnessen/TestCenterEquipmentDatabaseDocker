@@ -1,6 +1,17 @@
-FROM testcenterlaerdal/database
+FROM node:18-alpine as npm_builder
+
+ENV NODE_ENV=production
+WORKDIR /var/www/app
+COPY ./src/package.json ./src/package.lock* ./
+RUN npm install
+
+
+FROM testcenterlaerdal/database as composer_stage
 # TestCenterEquipmentDatabase
 # fhsinchy/php-nginx-base:php8.1.3-fpm-nginx1.20.2-alpine3.15
+
+# Copy everything from prev stage
+COPY --from=npm_builder /var/www/app /var/www/app 
 
 # set composer related environment variables
 ENV PATH="/composer/vendor/bin:$PATH" \
@@ -43,7 +54,7 @@ COPY ./docker/default.conf /etc/nginx/conf.d/default.conf
 WORKDIR /var/www/app
 COPY ./src .
 # Copy env
-# COPY ./src/.env.example /.env  
+# COPY ./src/.env.example .env  
 
 RUN composer require laravel/ui:^3.0
 
@@ -58,11 +69,14 @@ RUN composer dump-autoload -o \
     && chown -R :www-data /var/www/app \
     && chmod -R 775 /var/www/app/storage /var/www/app/bootstrap/cache
 
+
 EXPOSE 80
 
 # RUN chown -R www-data:www-data /var/www
+
 # This is bad practice for prod server.
 RUN chown -R 777 /var/www 
+
 # RUN chown -R $USER:www-data storage
 # RUN chown -R $USER:www-data bootstrap/cache
 # RUN chown -R 775 storage
@@ -74,20 +88,19 @@ RUN chown -R 777 /var/www
 
 
 # RUN mkdir -p $CYPRESS_CACHE_FOLDER
-RUN npm cache clean --force
-RUN npm install cypress -g  --unsafe-perm=true --allow-root cypress
-RUN npm install --production
+# RUN npm cache clean --force
+# RUN npm install cypress -g  --unsafe-perm=true --allow-root cypress
+# RUN npm install --production
 
-RUN chown -R $USER:www-data storage
-RUN chown -R $USER:www-data bootstrap/cache
-RUN npm config set cache /tmp --global
 
-# RUN chown -R $USER:$USER /var/www
-# RUN chmod -R 755 /var/www
-# RUN chmod -R 755 storage/*
-# RUN chmod -R 755 bootstrap/*
+# RUN chown -R $USER:www-data storage
+# RUN chown -R $USER:www-data bootstrap/cache
+# # RUN npm config set cache /tmp --global
 
-RUN chown -R www-data:www-data .
+
+# RUN chown -R www-data:www-data .
+
+
 
 # Run mix
 #RUN npm run prod
@@ -101,3 +114,10 @@ RUN chown -R www-data:www-data .
 
 # run supervisor
 # CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
+
+
+
+# RUN chown -R $USER:$USER /var/www
+# RUN chmod -R 755 /var/www
+# RUN chmod -R 755 storage/*
+# RUN chmod -R 755 bootstrap/*

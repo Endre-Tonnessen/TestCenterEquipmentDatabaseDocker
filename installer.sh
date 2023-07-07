@@ -21,13 +21,14 @@ docker exec app-laerdal-database cp .env.example .env
 docker exec app-laerdal-database php artisan key:generate
 docker exec app-laerdal-database php artisan storage:link
 
-# docker exec app-laerdal-database npm install
+# docker exec app-laerdal-database npm install --omit=dev
 # docker exec app-laerdal-database npm cache clean --force
 # docker exec app-laerdal-database npm install cypress -g  --unsafe-perm=true --allow-root cypress
 docker exec app-laerdal-database chown -R 1000:1000 "/tmp"
 docker exec app-laerdal-database chown -R 82:82 "/tmp"
-docker exec app-laerdal-database npm install --production
+# docker exec app-laerdal-database npm install --production
 
+docker exec app-laerdal-database chown -R root /var/www/app
 docker exec app-laerdal-database npm run prod
 
 # Run Production caching
