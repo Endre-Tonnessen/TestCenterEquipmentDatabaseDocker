@@ -74,27 +74,27 @@ class AdministratorController extends Controller
         $zip = new \ZipArchive();
         $fileName = "backup.zip";
         //Delete old zip
-        File::delete($storagePath.'\\'.$fileName);
+        File::delete($storagePath.'/'.$fileName);
 
-        if ($zip->open($storagePath . '\\' . $fileName, \ZipArchive::CREATE))
+        if ($zip->open($storagePath . '/' . $fileName, \ZipArchive::CREATE))
         {
             $zip->addEmptyDir('Images');
             $zip->addEmptyDir('SQL');
 
             //Add SQLDump backup
-            $SQLBackup = storage_path() ."\\Backups\\".  $newestBackupFileName;
-            $zip->addFile($SQLBackup, 'SQL\\'.$newestBackupFileName);
+            $SQLBackup = storage_path() ."/Backups/".  $newestBackupFileName;
+            $zip->addFile($SQLBackup, 'SQL/'.$newestBackupFileName);
 
             //Add all images
-            $files = File::files(public_path('\storage\uploadedEquipmentImages'));
+            $files = File::files(public_path('storage/uploadedEquipmentImages'));
             foreach ($files as $key => $value){
                 $relativeName = basename($value);
-                $zip->addFile($value, 'Images\\'.$relativeName);
+                $zip->addFile($value, 'Images/'.$relativeName);
             }
             $zip->close();
         }
 
-        return response()->download($storagePath.'\\'.$fileName);
+        return response()->download($storagePath.'/'.$fileName);
     }
 
     /**
@@ -127,7 +127,7 @@ class AdministratorController extends Controller
 
             // Open and Unzip file and get contents
             $zip = new \ZipArchive();
-            if ($zip->open($storagePath . '\\' . $fileName)) {
+            if ($zip->open($storagePath . '/' . $fileName)) {
                 // Unzip
                 $zip->extractTo($storagePath);
 
@@ -142,7 +142,7 @@ class AdministratorController extends Controller
                 $old_images = Storage::disk('public')->allFiles('uploadedEquipmentImages');
                 Storage::disk('public')->delete($old_images);
                 //Insert new images
-                File::copyDirectory(storage_path('RestorationBackup\\Images'), storage_path('app\\public\\uploadedEquipmentImages'));
+                File::copyDirectory(storage_path('RestorationBackup/Images'), storage_path('app/public/uploadedEquipmentImages'));
             } else {
                 // Failed to open ZIP
                 return Redirect::back()->with('modalResponse', ['icon' => 'error', 'title' => "Error in processing backup file. Restoration failed."]);
