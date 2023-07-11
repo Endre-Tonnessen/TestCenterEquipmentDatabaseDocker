@@ -40,6 +40,7 @@ RUN apk add --no-cache mariadb-connector-c-dev
 #RUN apt-get install php7.2-mbstring
 #RUN apt-get install php7.2-dom
 
+COPY docker/uploads.ini /usr/local/etc/php/conf.d
 
 # compile native PHP packages
 RUN docker-php-ext-install \
@@ -59,6 +60,14 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 #     --with-png-dir \
 #     --with-zlib-dir
 RUN docker-php-ext-install -j$(nproc) gd
+
+# Change php.ini to allow for larger fileuploads
+# RUN sed -E -i -e 's/max_execution_time = 30/max_execution_time = 120/' /usr/local/etc/php/php.ini-production \
+#     && sed -E -i -e 's/memory_limit = 128M/memory_limit = 512M/' /usr/local/etc/php/php.ini-production \
+#     && sed -E -i -e 's/upload_max_filesize = 2M/upload_max_filesize = 100M/' /usr/local/etc/php/php.ini-production \
+#     && sed -E -i -e 's/memory_limit = 128M/memory_limit = 512M/' /usr/local/etc/php/php.ini-development \
+#     && sed -E -i -e 's/upload_max_filesize = 2M/upload_max_filesize = 100M/' /usr/local/etc/php/php.ini-development \
+#     && sed -E -i -e 's/max_execution_time = 30/max_execution_time = 120/' /usr/local/etc/php/php.ini-development 
 
 # install additional packages from PECL
 RUN pecl install zip && docker-php-ext-enable zip \
