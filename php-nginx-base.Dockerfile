@@ -20,6 +20,8 @@ RUN apk update && apk add --no-cache \
     # mysql-client \ 
     mariadb-client
 
+RUN apk add --no-cache mariadb-connector-c-dev
+
 # # Install system dependencies
 # RUN apt-get update && apt-get install -y \
 #     build-essential \

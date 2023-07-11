@@ -30,8 +30,8 @@ class CreateDatabaseBackup {
         //$command = "mysqldump --column-statistics=0 --user=" . $DB_USERNAME ." --password=" . $DB_PASSWORD . " --host=" . $DB_HOST . " " . $DB_DATABASE . "  > " . $storagePath . "/" . $filename;
         // ---- NOTE!  The above information may no longer be accurate. Further testing is required. ----
 
-        $command = "mysqldump --user=" . $DB_USERNAME ." --password=" . $DB_PASSWORD . " --host=" . $DB_HOST . " " . $DB_DATABASE . " > " . $storagePath . "\\" . $filename;
-        dd($command)
+        $command = "mysqldump --user=" . $DB_USERNAME ." --password=" . $DB_PASSWORD . " --host=" . $DB_HOST . " " . $DB_DATABASE . " > " . $storagePath . "/" . $filename;
+        // dd($command);
         /* NOTE: Old config from prod env.
         //mysqldump command with account credentials from .env file. storage_path() adds default local storage path
         //--column-statistics=0

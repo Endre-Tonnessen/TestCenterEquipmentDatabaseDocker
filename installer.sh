@@ -39,7 +39,6 @@ docker exec app-laerdal-database php artisan config:cache
 # Clear and cache views
 docker exec app-laerdal-database php artisan view:cache
 
-docker exec app-laerdal-database php artisan migrate:refresh --seed # --force
 # docker exec app-laerdal-database php artisan db:seed # Initial admin account
 # Run browser?
 
@@ -47,6 +46,9 @@ docker exec app-laerdal-database npm run prod
 
 
 docker exec app-laerdal-database chown -R www-data:www-data .
+
+docker exec app-laerdal-database php artisan migrate:refresh --seed # --force
+
 
 # docker exec app-laerdal-database chmod -R +rwX .
 
