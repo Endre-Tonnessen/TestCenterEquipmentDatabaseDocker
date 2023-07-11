@@ -129,11 +129,27 @@ class AdministratorController extends Controller
             $zip = new \ZipArchive();
             if ($zip->open($storagePath . '/' . $fileName)) {
                 // Unzip
-                $zip->extractTo($storagePath);
+                Storage::disk('restorationbackup')->makeDirectory("SQL");
+                Storage::disk('restorationbackup')->makeDirectory("Images");
+                $zip->extractTo($storagePath, array('Images', 'SQL'));
+
+                $all_files_in_directory = Storage::disk('restorationbackup')->allFiles();
+                foreach ($all_files_in_directory as $f) {
+                    if (substr($f, 0,3) == "SQL") {
+                        Storage::disk('restorationbackup')->move($f, substr($f, 0,3));
+                        Storage::disk('restorationbackup')->move($f, "SQL/".substr($f, 0,3));
+                    }
+                    if (substr($f, 0,6) == "Images") {
+                        Storage::disk('restorationbackup')->move($f, "Images/".$f);
+                    }
+                }
+
 
                 // Get SQL file
                 $array = Storage::disk('restorationbackup')->allFiles('SQL');
+                dd($array);
                 $SQL_file = end($array);
+                dd($SQL_file);
                 //Replace database with uploaded SQL file
                 DB::unprepared(Storage::disk('restorationbackup')->get($SQL_file)); //This is dangerous/not best practice. Have yet to find alternatives.
 
@@ -149,6 +165,7 @@ class AdministratorController extends Controller
             }
             $zip->close();
         } catch (\Exception $e) {
+            dd($e);
             return Redirect::back()->with('modalResponse', ['icon' => 'error', 'title' => "Failed to restore database!"]);
         }
 
