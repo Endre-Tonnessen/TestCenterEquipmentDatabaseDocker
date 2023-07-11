@@ -16,7 +16,9 @@ RUN apk update && apk add --no-cache \
     $PHPIZE_DEPS \
     libjpeg-turbo-dev \ 
     npm \ 
-    nodejs
+    nodejs \ 
+    # mysql-client \ 
+    mariadb-client
 
 # # Install system dependencies
 # RUN apt-get update && apt-get install -y \

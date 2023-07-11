@@ -1,10 +1,12 @@
 FROM node:18-alpine as npm_builder
 
-# ENV NODE_ENV=production
+ENV NODE_ENV=production
 # ENV NODE_ENV=dev
 WORKDIR /var/www/app
 COPY ./src/package.json ./src/package.lock* ./
-RUN npm install --unsafe-perm=true --allow-root
+RUN npm uninstall cypress
+RUN npm install --omit=dev
+#--unsafe-perm=true --allow-root
 
 
 FROM testcenterlaerdal/database as composer_stage
@@ -70,7 +72,7 @@ RUN composer dump-autoload -o \
     && chown -R :www-data /var/www/app \
     && chmod -R 775 /var/www/app/storage /var/www/app/bootstrap/cache
 
-
+# RUN chown $USER:$USER storage/logs/laravel.log
 EXPOSE 80
 
 # RUN chown -R www-data:www-data /var/www

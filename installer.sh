@@ -4,7 +4,7 @@
 
 #sudo apt install openssh-server # Install ssh 
 
-sudo chmod 666 /var/run/docker.sock
+sudo chmod 666 /var/run/docker.sock 
 
 # Install base image
 docker build -f php-nginx-base.Dockerfile -t testcenterlaerdal/database . 
@@ -25,7 +25,7 @@ docker exec app-laerdal-database php artisan storage:link
 
 # docker exec app-laerdal-database npm install --omit=dev
 # docker exec app-laerdal-database npm cache clean --force
-docker exec app-laerdal-database npm install -g  --unsafe-perm=true --allow-root cypress
+# docker exec app-laerdal-database npm install -g  --unsafe-perm=true --allow-root cypress
 docker exec app-laerdal-database chown -R 1000:1000 "/tmp"
 docker exec app-laerdal-database chown -R 82:82 "/tmp"
 # docker exec app-laerdal-database npm install --production
@@ -39,8 +39,8 @@ docker exec app-laerdal-database php artisan config:cache
 # Clear and cache views
 docker exec app-laerdal-database php artisan view:cache
 
-docker exec app-laerdal-database php artisan migrate # --force
-docker exec app-laerdal-database php artisan db:seed # Initial admin account
+docker exec app-laerdal-database php artisan migrate:refresh --seed # --force
+# docker exec app-laerdal-database php artisan db:seed # Initial admin account
 # Run browser?
 
 docker exec app-laerdal-database npm run prod
