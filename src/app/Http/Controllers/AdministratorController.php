@@ -128,6 +128,12 @@ class AdministratorController extends Controller
             // Open and Unzip file and get contents
             $zip = new \ZipArchive();
             if ($zip->open($storagePath . DIRECTORY_SEPARATOR . $fileName)) {
+                // Remove previous files
+                $old_restoration_images = Storage::disk('restorationbackup')->allFiles('Images');
+                Storage::disk('restorationbackup')->delete($old_restoration_images);
+                $old_restoration_SQL = Storage::disk('restorationbackup')->allFiles('SQL');
+                Storage::disk('restorationbackup')->delete($old_restoration_SQL);
+
                 // ZipArchive has differing behavior on windows and linux
                 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                     // Running Windows
@@ -148,42 +154,9 @@ class AdministratorController extends Controller
                     $output = shell_exec('for file in *.jpg; do  mv -i "$file" "${file:7}"; done');
                     chdir($old_path);
                     // Remove "SQL/"
-                    $old_path = getcwd();
                     chdir(Storage::disk('restorationbackup')->path('SQL'));
                     $output = shell_exec('for file in *.sql; do  mv -i "$file" "${file:4}"; done');
                     chdir($old_path);
-                    // dd(exec("find ".Storage::disk('restorationbackup')->path('Images')." -maxdepth 1 -name 'Images*' -print"));#-exec sh -c 'fi="{}"; mv -- '$fi' "${f%Images\}"' \;");
-                    
-                    //Rename
-                    // $all_files_in_directory = Storage::disk('restorationbackup')->allFiles('Images');
-                    // dd($all_files_in_directory);
-                    // foreach ($all_files_in_directory as $f) {
-                    //     // File::move(Storage::disk('restorationbackup')->path())
-                    // }
-                    
-                    // Storage::disk('restorationbackup')->makeDirectory("SQL");
-                    // Storage::disk('restorationbackup')->makeDirectory("Images");
-                    // $zip->extractTo($storagePath."/unzip");
-                    // $zip->close();
-                    // $all_files_in_directory = Storage::disk('restorationbackup')->allFiles('unzip');
-                    // // dd(array_map(function ($item) {
-                    // //     return substr($item, 0,7);
-                    // // }, $all_files_in_directory));
-                    // // dd(substr($all_files_in_directory[5], 13));
-                    // foreach ($all_files_in_directory as $f) {
-                    //     // if (substr($f, 7,9) == "SQL") {
-                    //     //     Storage::disk('restorationbackup')->move($f, substr($f, 13));
-                    //     //     Storage::disk('restorationbackup')->move($f, "SQL/".substr($f, 4, strlen($f)));
-                    //     // }
-                    //     if (substr($f, 6,6) == "Images") {
-                    //         // Storage::disk('restorationbackup')->move($f, substr($f, 13));
-                    //         // dd($f);
-                    //         // Storage::move('RestorationBackup'.DIRECTORY_SEPARATOR.$f, "Images".DIRECTORY_SEPARATOR."test.jpg");
-                    //         // Storage::disk('restorationbackup')->move($f, "Images/".substr($f, 13));
-                    //         // Storage::disk('restorationbackup')->move($f, "Images/".substr($f, 7, strlen($f)));
-                    //     }
-                    // }
-    
                 }
 
                 // Get SQL file
@@ -205,7 +178,6 @@ class AdministratorController extends Controller
                 return Redirect::back()->with('modalResponse', ['icon' => 'error', 'title' => "Error in processing backup file. Restoration failed."]);
             }
         } catch (\Exception $e) {
-            dd($e);
             return Redirect::back()->with('modalResponse', ['icon' => 'error', 'title' => "Failed to restore database!"]);
         }
 
