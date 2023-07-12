@@ -127,29 +127,70 @@ class AdministratorController extends Controller
 
             // Open and Unzip file and get contents
             $zip = new \ZipArchive();
-            if ($zip->open($storagePath . '/' . $fileName)) {
-                // Unzip
-                Storage::disk('restorationbackup')->makeDirectory("SQL");
-                Storage::disk('restorationbackup')->makeDirectory("Images");
-                $zip->extractTo($storagePath, array('Images', 'SQL'));
-
-                $all_files_in_directory = Storage::disk('restorationbackup')->allFiles();
-                foreach ($all_files_in_directory as $f) {
-                    if (substr($f, 0,3) == "SQL") {
-                        Storage::disk('restorationbackup')->move($f, substr($f, 0,3));
-                        Storage::disk('restorationbackup')->move($f, "SQL/".substr($f, 0,3));
-                    }
-                    if (substr($f, 0,6) == "Images") {
-                        Storage::disk('restorationbackup')->move($f, "Images/".$f);
-                    }
+            if ($zip->open($storagePath . DIRECTORY_SEPARATOR . $fileName)) {
+                // ZipArchive has differing behavior on windows and linux
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    // Running Windows
+                    $zip->extractTo($storagePath);
+                    $zip->close();
+                } else {
+                    //Running Linux
+                    // Unzip
+                    $images = exec("unzip -j ".Storage::disk('restorationbackup')->path('RestorationBackup.zip')." -d".Storage::disk('restorationbackup')->path('Images'). " -x *.sql");
+                    $sql = exec("unzip -j ".Storage::disk('restorationbackup')->path('RestorationBackup.zip')." -d".Storage::disk('restorationbackup')->path('SQL'). " -x *.jpg");
+                    
+                    //Remove "Images\" from beginning of filename. 
+                    // Unzipping behavior of a windows created zipfile on Linux leaves foldernames in the zipfile attached to the original filename.
+                    // Creating problems when trying to access the files through the filesystem, due to names like "Images/restOfImageName.jpg",
+                    // not being a folder, but a filename. 
+                    $old_path = getcwd();
+                    chdir(Storage::disk('restorationbackup')->path('Images'));
+                    $output = shell_exec('for file in *.jpg; do  mv -i "$file" "${file:7}"; done');
+                    chdir($old_path);
+                    // Remove "SQL/"
+                    $old_path = getcwd();
+                    chdir(Storage::disk('restorationbackup')->path('SQL'));
+                    $output = shell_exec('for file in *.sql; do  mv -i "$file" "${file:4}"; done');
+                    chdir($old_path);
+                    // dd(exec("find ".Storage::disk('restorationbackup')->path('Images')." -maxdepth 1 -name 'Images*' -print"));#-exec sh -c 'fi="{}"; mv -- '$fi' "${f%Images\}"' \;");
+                    
+                    //Rename
+                    // $all_files_in_directory = Storage::disk('restorationbackup')->allFiles('Images');
+                    // dd($all_files_in_directory);
+                    // foreach ($all_files_in_directory as $f) {
+                    //     // File::move(Storage::disk('restorationbackup')->path())
+                    // }
+                    
+                    // Storage::disk('restorationbackup')->makeDirectory("SQL");
+                    // Storage::disk('restorationbackup')->makeDirectory("Images");
+                    // $zip->extractTo($storagePath."/unzip");
+                    // $zip->close();
+                    // $all_files_in_directory = Storage::disk('restorationbackup')->allFiles('unzip');
+                    // // dd(array_map(function ($item) {
+                    // //     return substr($item, 0,7);
+                    // // }, $all_files_in_directory));
+                    // // dd(substr($all_files_in_directory[5], 13));
+                    // foreach ($all_files_in_directory as $f) {
+                    //     // if (substr($f, 7,9) == "SQL") {
+                    //     //     Storage::disk('restorationbackup')->move($f, substr($f, 13));
+                    //     //     Storage::disk('restorationbackup')->move($f, "SQL/".substr($f, 4, strlen($f)));
+                    //     // }
+                    //     if (substr($f, 6,6) == "Images") {
+                    //         // Storage::disk('restorationbackup')->move($f, substr($f, 13));
+                    //         // dd($f);
+                    //         // Storage::move('RestorationBackup'.DIRECTORY_SEPARATOR.$f, "Images".DIRECTORY_SEPARATOR."test.jpg");
+                    //         // Storage::disk('restorationbackup')->move($f, "Images/".substr($f, 13));
+                    //         // Storage::disk('restorationbackup')->move($f, "Images/".substr($f, 7, strlen($f)));
+                    //     }
+                    // }
+    
                 }
-
 
                 // Get SQL file
                 $array = Storage::disk('restorationbackup')->allFiles('SQL');
-                dd($array);
+                // dd($array);
                 $SQL_file = end($array);
-                dd($SQL_file);
+                // dd($SQL_file);
                 //Replace database with uploaded SQL file
                 DB::unprepared(Storage::disk('restorationbackup')->get($SQL_file)); //This is dangerous/not best practice. Have yet to find alternatives.
 
@@ -163,7 +204,6 @@ class AdministratorController extends Controller
                 // Failed to open ZIP
                 return Redirect::back()->with('modalResponse', ['icon' => 'error', 'title' => "Error in processing backup file. Restoration failed."]);
             }
-            $zip->close();
         } catch (\Exception $e) {
             dd($e);
             return Redirect::back()->with('modalResponse', ['icon' => 'error', 'title' => "Failed to restore database!"]);
