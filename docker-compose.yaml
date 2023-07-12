@@ -13,6 +13,7 @@ services:
             MYSQL_PASSWORD: 
             MYSQL_DATABASE: 'testcenterequipmentdatabase'
             MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        restart: unless-stopped
 
     app:
         build: .
