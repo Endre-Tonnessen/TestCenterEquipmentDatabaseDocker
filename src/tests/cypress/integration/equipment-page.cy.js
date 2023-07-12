@@ -23,6 +23,7 @@ describe('Equipment Page', () => {
         cy.visit('/Equipment/'+name);
     })
 
+
     it('Changelog should have correct amount of dates ', function () {
         cy.get('#ChangeLogButton').click()
         //Should be two when just been created.
@@ -108,6 +109,7 @@ describe('Equipment Page', () => {
 
         //Delete
         cy.get(':nth-child(2) > [style=" "]').click()
+        cy.get('#deletecalibrationandaccuracybutton').click()
         cy.get('.swal2-confirm').click()
         cy.get('#CalibrationRangeAndAccuracyTable > tbody').find('tr').its('length').should('eq',2)
     });
@@ -128,11 +130,58 @@ describe('Equipment Page', () => {
 
         cy.get('#nav-profile-tab').click() //Click into correct tab
         cy.get('tbody > tr > [style=" "]').click()
+        cy.get('#deletemeasurementandaccuracybutton').click()
         cy.get('.swal2-confirm').click() //Delete row
 
         //Verify there are no rows
         cy.get('#MeasurementRangeAndAccuracyTable > tbody > tr > .text-md-center')
         cy.get('#MeasurementRangeAndAccuracyTable > tbody').find('tr').its('length').should('eq',1)
+    });
+
+    it('Edit Measuring Range and Accuracy', function () {
+        cy.visit('/Equipment/'+name);
+        addMeasuringRangeAndAccuracy(name)
+        cy.get('#nav-profile-tab').click() //Switch to measurement tab
+        const old_id= cy.get('#MeasurementRangeAndAccuracyTable > tbody > tr > [style=" "]').invoke('text')
+        cy.get('#MeasurementRangeAndAccuracyTable > tbody > tr > :nth-child(1)').click()
+        cy.get('#MeasurementRangeLower').clear().type("123")
+        cy.get('#MeasurementRangeUpper').clear().type("1007")
+        cy.get('#MeasurementRangeUnit').clear().type("ml")
+        cy.get('#MeasurementRangeAccuracy').clear().type("+- 0.34 ml")
+        cy.get('#measurement_form > .modal-body > .col-11 > :nth-child(5) > .col-md-8 > #ReasonTextMeasuringModal').type("Updated measurement range from mm to ml.")
+        cy.get('#model-buttons-close-add-delete-measurment > .btn-success').click() //Click Edit
+        //Check info
+        cy.get('#nav-profile-tab').click() //Switch to measurement tab
+        cy.get('#MeasurementRangeAndAccuracyTable > tbody > tr > :nth-child(1)').should('not.eq', old_id)
+        cy.get('#MeasurementRangeAndAccuracyTable > tbody > tr > :nth-child(2)').should('contain.text', "123")
+        cy.get('#MeasurementRangeAndAccuracyTable > tbody > tr > :nth-child(3)').should('contain.text', "1007")
+        cy.get('#MeasurementRangeAndAccuracyTable > tbody > tr > :nth-child(4)').should("contain.text", "ml")
+        cy.get('#MeasurementRangeAndAccuracyTable > tbody > tr > :nth-child(5)').should("contain.text", "+- 0.34 ml")
+        //cy.get('.card > .tableFixHead').should('have.text', '\n User: Admin Comment: Updated calibration range from mm to ml.\n Calibration R&A. Old id: 1 New id: 2')
+        //Check history log
+        cy.get('.card > .tableFixHead').should('include.text','Updated measurement range from mm to ml.\n Measuring R&A. Old id: 1 New id: 2')
+    });
+
+    it('Edit Calibration Range and Accuracy', function () {
+        cy.visit('/Equipment/'+name);
+        addCalibratinRangeAndAccuracy(name)
+        const old_id = cy.get('tbody > tr > [style=" "]').invoke('text')
+        cy.get('tbody > tr > [style=" "]').click() //Click calibration range record
+        cy.get('#CalibrationRangeLower').clear().type("123")
+        cy.get('#CalibrationRangeUpper').clear().type("1007")
+        cy.get('#CalibrationRangeUnit').clear().type("ml")
+        cy.get('#CalibrationRangeAccuracy').clear().type("+- 0.34 ml")
+        cy.get('#calibration_form > .modal-body > .col-11 > :nth-child(5) > .col-md-8 > #ReasonTextMeasuringModal').type("Updated calibration range from mm to ml.")
+        cy.get('#model-buttons-close-add-delete > .btn-success').click() //Click Edit
+        //Check info
+        const new_id = cy.get('tbody > tr > [style=" "]').invoke('text')
+        cy.get('tbody > tr > :nth-child(1)').should('not.eq', old_id)
+        cy.get('tbody > tr > :nth-child(2)').should('contain.text', "123")
+        cy.get('tbody > tr > :nth-child(3)').should('contain.text', "1007")
+        cy.get('tbody > tr > :nth-child(4)').should("contain.text", "ml")
+        cy.get('tbody > tr > :nth-child(5)').should("contain.text", "+- 0.34 ml")
+        //Check history log
+        cy.get('.card > .tableFixHead').should('include.text','Updated calibration range from mm to ml.\n Calibration R&A. Old id: 1 New id: 2')
     });
 
     it('Update Calibration Frequency area', function () {

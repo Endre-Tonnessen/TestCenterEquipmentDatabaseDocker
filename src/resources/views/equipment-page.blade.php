@@ -256,7 +256,7 @@
                                     <h1 class="text-center border-red-bottom m-1">Calibration Range & Accuracy </h1>
                                 </div>
                                 <div class="tableFixHead mb-2" style="max-height: 300px">
-                                    <table class="" id="CalibrationRangeAndAccuracyTable" @if(\Illuminate\Support\Facades\Auth::check()) onClick="deleteCalibrationRangeAccuracyModal(event)" @endif> <!-- w-auto to fit table to content. -->
+                                    <table class="" id="CalibrationRangeAndAccuracyTable" @if(\Illuminate\Support\Facades\Auth::check() && empty($versionDateTime)) onClick="deleteCalibrationRangeAccuracyModal(event)" @endif> <!-- w-auto to fit table to content. -->
                                     {{-- <table class="" id="CalibrationRangeAndAccuracyTable" @if(\Illuminate\Support\Facades\Auth::check() && empty($versionDateTime)) onClick="deleteCalibrationRangeAccuracyModal(event)" @endif> --}} <!-- w-auto to fit table to content. -->
                                         <thead>
                                         <tr style="background-color: #EE2D24;">

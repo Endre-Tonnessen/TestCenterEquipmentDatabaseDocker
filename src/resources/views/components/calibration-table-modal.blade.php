@@ -69,7 +69,7 @@
 
 
     {{-- Deleting existing row --}}
-    <form action="{{ $equipmentID }}/dMes" method="POST" id="deleteCalibrationRangeAndAccuracy" style="display: none;">
+    <form action="{{ $equipmentID }}/dCal" method="POST" id="deleteCalibrationRangeAndAccuracy" style="display: none;">
         @csrf
         <input id="CalibrationRangeAndAccuracyID" name="CalibrationRangeAndAccuracyID" value="">
         <input id="ReasonText" name="ReasonText" value="Deleted row of calibration range & accuracy.">
