@@ -74,9 +74,9 @@ class AdministratorController extends Controller
         $zip = new \ZipArchive();
         $fileName = "backup.zip";
         //Delete old zip
-        File::delete($storagePath.'/'.$fileName);
+        File::delete($storagePath.DIRECTORY_SEPARATOR.$fileName);
 
-        if ($zip->open($storagePath . '/' . $fileName, \ZipArchive::CREATE))
+        if ($zip->open($storagePath.DIRECTORY_SEPARATOR.$fileName, \ZipArchive::CREATE))
         {
             $zip->addEmptyDir('Images');
             $zip->addEmptyDir('SQL');
@@ -94,7 +94,7 @@ class AdministratorController extends Controller
             $zip->close();
         }
 
-        return response()->download($storagePath.'/'.$fileName);
+        return response()->download($storagePath.DIRECTORY_SEPARATOR.$fileName);
     }
 
     /**
@@ -152,6 +152,7 @@ class AdministratorController extends Controller
                     $old_path = getcwd();
                     chdir(Storage::disk('restorationbackup')->path('Images'));
                     $output = shell_exec('for file in *.jpg; do  mv -i "$file" "${file:7}"; done');
+                    $output = shell_exec('for file in *.sql; do  rm "$file"; done'); // Remove trailing sql file from image folder
                     chdir($old_path);
                     // Remove "SQL/"
                     chdir(Storage::disk('restorationbackup')->path('SQL'));
