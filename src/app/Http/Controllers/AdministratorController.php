@@ -173,12 +173,13 @@ class AdministratorController extends Controller
                 $old_images = Storage::disk('public')->allFiles('uploadedEquipmentImages');
                 Storage::disk('public')->delete($old_images);
                 //Insert new images
-                File::copyDirectory(storage_path('RestorationBackup/Images'), storage_path('app/public/uploadedEquipmentImages'));
+                File::copyDirectory(storage_path('RestorationBackup'.DIRECTORY_SEPARATOR.'Images'), storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'uploadedEquipmentImages'));
             } else {
                 // Failed to open ZIP
                 return Redirect::back()->with('modalResponse', ['icon' => 'error', 'title' => "Error in processing backup file. Restoration failed."]);
             }
         } catch (\Exception $e) {
+            dd($e);
             return Redirect::back()->with('modalResponse', ['icon' => 'error', 'title' => "Failed to restore database!"]);
         }
 
