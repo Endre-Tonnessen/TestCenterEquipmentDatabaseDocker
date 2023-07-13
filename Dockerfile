@@ -1,20 +1,22 @@
-FROM node:18-alpine as npm_builder
-
-ENV NODE_ENV=production
+FROM node:18-alpine AS npm_builder
+# ENV NODE_ENV=production
 # ENV NODE_ENV=dev
 WORKDIR /var/www/app
-COPY ./src/package.json ./src/package.lock* ./
-RUN npm uninstall cypress
+COPY ./src/package.json ./src/package-lock.json ./
+# RUN npm uninstall cypress
 RUN npm install --omit=dev
 #--unsafe-perm=true --allow-root
 
 
-FROM testcenterlaerdal/database as composer_stage
+FROM testcenterlaerdal/database AS composer_stage
+COPY --from=npm_builder /var/www/app/node_modules /var/www/app/node_modules
+
 # TestCenterEquipmentDatabase
 # fhsinchy/php-nginx-base:php8.1.3-fpm-nginx1.20.2-alpine3.15
 
 # Copy everything from prev stage
-COPY --from=npm_builder /var/www/app /var/www/app 
+# COPY --from=npm_builder /var/www/app/node_modules /var/www/app 
+# COPY --from=npm_builder /var/www/app /var/www/app 
 
 # set composer related environment variables
 ENV PATH="/composer/vendor/bin:$PATH" \
@@ -74,6 +76,7 @@ RUN composer dump-autoload -o \
 
 # RUN chown $USER:$USER storage/logs/laravel.log
 EXPOSE 80
+
 
 # RUN chown -R www-data:www-data /var/www
 

@@ -41,7 +41,9 @@ docker exec app-laerdal-database php artisan view:cache
 
 # docker exec app-laerdal-database php artisan db:seed # Initial admin account
 # Run browser?
-
+sudo chown -R $USER:$USER .
+docker exec app-laerdal-database npm uninstall cypress
+docker exec app-laerdal-database npm install
 docker exec app-laerdal-database npm run prod
 
 
