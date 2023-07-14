@@ -197,16 +197,16 @@ class EquipmentController extends Controller
     {
         $request->validate([
             'equipmentID' => 'required',
-            'imgFile' => 'Mimes:jpeg,jpg,png,gif|required|image|max:10000'
+            'imgFile' => 'Mimes:jpeg,jpg,png|required|image|max:10000'
         ]);
 
         try {
             $img_path = $request->imgFile->store('uploadedEquipmentImages','public');
 
             if ($request->imageFormatting == "cut") {
-                $image = Image::make(public_path("storage/$img_path"))->fit(450,450);
+                $image = Image::make(public_path("storage".DIRECTORY_SEPARATOR."$img_path"))->fit(450,450);
             } else {
-                $image = Image::make(public_path("storage/$img_path"))->resize(450,450);
+                $image = Image::make(public_path("storage".DIRECTORY_SEPARATOR."$img_path"))->resize(450,450);
             }
             $image->save();
 

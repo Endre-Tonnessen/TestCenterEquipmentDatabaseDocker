@@ -74,27 +74,27 @@ class AdministratorController extends Controller
         $zip = new \ZipArchive();
         $fileName = "backup.zip";
         //Delete old zip
-        File::delete($storagePath.'/'.$fileName);
+        File::delete($storagePath.DIRECTORY_SEPARATOR.$fileName);
 
-        if ($zip->open($storagePath . '/' . $fileName, \ZipArchive::CREATE))
+        if ($zip->open($storagePath.DIRECTORY_SEPARATOR.$fileName, \ZipArchive::CREATE))
         {
             $zip->addEmptyDir('Images');
             $zip->addEmptyDir('SQL');
 
             //Add SQLDump backup
-            $SQLBackup = storage_path() ."/Backups/".  $newestBackupFileName;
-            $zip->addFile($SQLBackup, 'SQL/'.$newestBackupFileName);
+            $SQLBackup = storage_path().DIRECTORY_SEPARATOR."Backups".DIRECTORY_SEPARATOR.$newestBackupFileName;
+            $zip->addFile($SQLBackup, 'SQL'.DIRECTORY_SEPARATOR.$newestBackupFileName);
 
             //Add all images
             $files = File::files(public_path('storage/uploadedEquipmentImages'));
             foreach ($files as $key => $value){
                 $relativeName = basename($value);
-                $zip->addFile($value, 'Images/'.$relativeName);
+                $zip->addFile($value, 'Images'.DIRECTORY_SEPARATOR.$relativeName);
             }
             $zip->close();
         }
 
-        return response()->download($storagePath.'/'.$fileName);
+        return response()->download($storagePath.DIRECTORY_SEPARATOR.$fileName);
     }
 
     /**
@@ -143,7 +143,7 @@ class AdministratorController extends Controller
                     //Running Linux
                     // Unzip
                     $images = exec("unzip -j ".Storage::disk('restorationbackup')->path('RestorationBackup.zip')." -d".Storage::disk('restorationbackup')->path('Images'). " -x *.sql");
-                    $sql = exec("unzip -j ".Storage::disk('restorationbackup')->path('RestorationBackup.zip')." -d".Storage::disk('restorationbackup')->path('SQL'). " -x *.jpg");
+                    $sql = exec("unzip -j ".Storage::disk('restorationbackup')->path('RestorationBackup.zip')." -d".Storage::disk('restorationbackup')->path('SQL'). " -x *.jpg -x *.png -x *.jpeg");
                     
                     //Remove "Images\" from beginning of filename. 
                     // Unzipping behavior of a windows created zipfile on Linux leaves foldernames in the zipfile attached to the original filename.
@@ -151,11 +151,25 @@ class AdministratorController extends Controller
                     // not being a folder, but a filename. 
                     $old_path = getcwd();
                     chdir(Storage::disk('restorationbackup')->path('Images'));
-                    $output = shell_exec('for file in *.jpg; do  mv -i "$file" "${file:7}"; done');
+                    $output = shell_exec('for file in *;
+                                          do
+                                            if [ "Images" = "${file:0:6}" ]; then
+                                                    mv -i "$file" "${file:7}"
+                                            fi;
+                                          done');
+                    $output = shell_exec('for file in *.sql; do  rm "$file"; done'); // Remove trailing sql file from image folder
                     chdir($old_path);
                     // Remove "SQL/"
                     chdir(Storage::disk('restorationbackup')->path('SQL'));
                     $output = shell_exec('for file in *.sql; do  mv -i "$file" "${file:4}"; done');
+                    // $output = shell_exec('for file in *.sql;
+                    //                       do
+                    //                       if [ "SQL" = "${file:0:3}" ]; then
+                    //                               mv -i "$file" "${file:4}"
+                    //                       fi;
+                    //                       done');
+                    $output = shell_exec('for file in *.jpg; do  rm "$file"; done'); // Remove trailing jpg file from image folder
+                    $output = shell_exec('for file in *.png; do  rm "$file"; done'); // Remove trailing png file from image folder
                     chdir($old_path);
                 }
 
@@ -172,12 +186,13 @@ class AdministratorController extends Controller
                 $old_images = Storage::disk('public')->allFiles('uploadedEquipmentImages');
                 Storage::disk('public')->delete($old_images);
                 //Insert new images
-                File::copyDirectory(storage_path('RestorationBackup/Images'), storage_path('app/public/uploadedEquipmentImages'));
+                File::copyDirectory(storage_path('RestorationBackup'.DIRECTORY_SEPARATOR.'Images'), storage_path('app'.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'uploadedEquipmentImages'));
             } else {
                 // Failed to open ZIP
                 return Redirect::back()->with('modalResponse', ['icon' => 'error', 'title' => "Error in processing backup file. Restoration failed."]);
             }
         } catch (\Exception $e) {
+            dd($e);
             return Redirect::back()->with('modalResponse', ['icon' => 'error', 'title' => "Failed to restore database!"]);
         }
 
