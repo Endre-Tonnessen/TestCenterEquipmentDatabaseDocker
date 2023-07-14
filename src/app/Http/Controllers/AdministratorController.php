@@ -143,7 +143,7 @@ class AdministratorController extends Controller
                     //Running Linux
                     // Unzip
                     $images = exec("unzip -j ".Storage::disk('restorationbackup')->path('RestorationBackup.zip')." -d".Storage::disk('restorationbackup')->path('Images'). " -x *.sql");
-                    $sql = exec("unzip -j ".Storage::disk('restorationbackup')->path('RestorationBackup.zip')." -d".Storage::disk('restorationbackup')->path('SQL'). " -x *.jpg");
+                    $sql = exec("unzip -j ".Storage::disk('restorationbackup')->path('RestorationBackup.zip')." -d".Storage::disk('restorationbackup')->path('SQL'). " -x *.jpg -x *.png");
                     
                     //Remove "Images\" from beginning of filename. 
                     // Unzipping behavior of a windows created zipfile on Linux leaves foldernames in the zipfile attached to the original filename.
@@ -157,6 +157,8 @@ class AdministratorController extends Controller
                     // Remove "SQL/"
                     chdir(Storage::disk('restorationbackup')->path('SQL'));
                     $output = shell_exec('for file in *.sql; do  mv -i "$file" "${file:4}"; done');
+                    $output = shell_exec('for file in *.jpg; do  rm "$file"; done'); // Remove trailing jpg file from image folder
+                    $output = shell_exec('for file in *.png; do  rm "$file"; done'); // Remove trailing png file from image folder
                     chdir($old_path);
                 }
 

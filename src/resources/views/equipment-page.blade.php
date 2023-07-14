@@ -189,10 +189,10 @@
                         <div class="row">
                             <div class="col">
                                 @if(\Illuminate\Support\Facades\Auth::check() && empty($versionDateTime))
-                                    @include("modals.update-equipment-image-modal", ['equipmentID' => $equipment->equipmentID])
+                                    @include("modals.update-equipment-image-modal", ['equipmentID' => $equipment->equipmentID]) 
                                 @endif
                                 <img class="EquipmentImage img-fluid" onclick="updateEquipmentImage()" src="{{ $equipment->img_path != NULL && $equipment->img_path != "" && file_exists(public_path("storage/$equipment->img_path")) ? asset("storage/$equipment->img_path") : asset("storage/PlaceholderImage.jpg")}}" alt="Equipment Image">
-                            </div>
+                            </div> 
                         </div>
                     </div>
                 </div> <!-- End of first box -->
