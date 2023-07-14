@@ -197,7 +197,7 @@ class EquipmentController extends Controller
     {
         $request->validate([
             'equipmentID' => 'required',
-            'imgFile' => 'Mimes:jpeg,jpg,png,gif|required|image|max:10000'
+            'imgFile' => 'Mimes:jpeg,jpg,png|required|image|max:10000'
         ]);
 
         try {

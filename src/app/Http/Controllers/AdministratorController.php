@@ -143,7 +143,7 @@ class AdministratorController extends Controller
                     //Running Linux
                     // Unzip
                     $images = exec("unzip -j ".Storage::disk('restorationbackup')->path('RestorationBackup.zip')." -d".Storage::disk('restorationbackup')->path('Images'). " -x *.sql");
-                    $sql = exec("unzip -j ".Storage::disk('restorationbackup')->path('RestorationBackup.zip')." -d".Storage::disk('restorationbackup')->path('SQL'). " -x *.jpg -x *.png");
+                    $sql = exec("unzip -j ".Storage::disk('restorationbackup')->path('RestorationBackup.zip')." -d".Storage::disk('restorationbackup')->path('SQL'). " -x *.jpg -x *.png -x *.jpeg");
                     
                     //Remove "Images\" from beginning of filename. 
                     // Unzipping behavior of a windows created zipfile on Linux leaves foldernames in the zipfile attached to the original filename.
