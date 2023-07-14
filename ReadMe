@@ -1,0 +1,15 @@
+
+
+1. Ta ekte backup file. Last opp og se om fungerer.
+2. Bilde filer ligger under Storage/app/public/uploadedEquipmentImages
+
+
+
+
+sudo chown -R test:test .
+docker exec app-laerdal-database chown -R www-data:www-data .
+
+
+
+
+
