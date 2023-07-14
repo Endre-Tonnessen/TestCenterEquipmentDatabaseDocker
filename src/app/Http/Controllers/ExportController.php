@@ -96,7 +96,7 @@ class ExportController extends Controller
     ) {
         try {
             //Open template
-            $spreadsheet = IOFactory::load(storage_path("app\public\StatusFormTemp.xlsx"));
+            $spreadsheet = IOFactory::load(storage_path("app".DIRECTORY_SEPARATOR."public".DIRECTORY_SEPARATOR."StatusFormTemp.xlsx"));
             $worksheet = $spreadsheet->getActiveSheet();
 
             //Reason for change
@@ -147,7 +147,7 @@ class ExportController extends Controller
 
             $worksheet->getPageSetup()->setPaperSize(PageSetup::PAPERSIZE_A4);
             $writer = IOFactory::createWriter($spreadsheet, 'Xls'); //For pdf convert, writer-type: Dompdf
-            header('Content-Type: application/vnd.ms-excel');
+            header('Content-Type: application'.DIRECTORY_SEPARATOR.'vnd.ms-excel');
             header('Content-Disposition: attachment; filename="'.$equipment->equipmentID . "S-" . Carbon::now()->format('Y').'.xls"');
             $writer->save('php://output'); //save(storage_path("app\public\\test.xls"));
         } catch (\Exception $e) {
