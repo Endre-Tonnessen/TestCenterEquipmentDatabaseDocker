@@ -3,7 +3,7 @@ FROM php:8.1.3-fpm-alpine3.15
 ENV NGINX_VERSION 1.20.2
 ENV NJS_VERSION   0.7.0
 ENV PKG_RELEASE   1
-ENV PHP_MEMORY_LIMIT=128M
+ENV PHP_MEMORY_LIMIT=512MB
 
 # install necessary alpine packages
 RUN apk update && apk add --no-cache \
