@@ -4,7 +4,6 @@
 
 @section('content')
 
-
 <div class='mainBox'>
     <div class='centeredBox' style='align-items: flex-start;'>
         <div class='optionBox'>
