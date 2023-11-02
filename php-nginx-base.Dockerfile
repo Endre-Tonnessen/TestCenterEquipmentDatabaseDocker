@@ -3,7 +3,7 @@ FROM php:8.1.3-fpm-alpine3.15
 ENV NGINX_VERSION 1.20.2
 ENV NJS_VERSION   0.7.0
 ENV PKG_RELEASE   1
-ENV PHP_MEMORY_LIMIT=512MB
+ENV PHP_MEMORY_LIMIT=1024MB
 
 # install necessary alpine packages
 RUN apk update && apk add --no-cache \
@@ -71,9 +71,9 @@ RUN docker-php-ext-install -j$(nproc) gd
 #     && sed -E -i -e 's/max_execution_time = 30/max_execution_time = 120/' /usr/local/etc/php/php.ini-development 
 
 # install additional packages from PECL
-RUN pecl install zip && docker-php-ext-enable zip \
-    && pecl install igbinary && docker-php-ext-enable igbinary \
-    && yes | pecl install redis && docker-php-ext-enable redis
+RUN pecl install zip && docker-php-ext-enable zip 
+RUN pecl install igbinary && docker-php-ext-enable igbinary 
+RUN pecl install redis && docker-php-ext-enable redis
 
 # install nginx
 RUN set -x \
