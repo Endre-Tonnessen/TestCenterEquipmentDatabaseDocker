@@ -10,6 +10,8 @@ sudo chown -R test:test .
 docker exec app-laerdal-database chown -R www-data:www-data .
 
 
-
+02/11/2023
+-> Samtale med Eivind. Reinstallerte hele databasen med en ny oppdatering som hånderer store bilde og backup filer.
+11:45 til 15:00
 
 
