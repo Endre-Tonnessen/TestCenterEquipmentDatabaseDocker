@@ -14,4 +14,6 @@ docker exec app-laerdal-database chown -R www-data:www-data .
 -> Samtale med Eivind. Reinstallerte hele databasen med en ny oppdatering som hånderer store bilde og backup filer.
 11:45 til 15:00
 
-
+03/11/2023
+-> Installasjon med Eivind på ny pc. Gjennomgang og testing av dokumentasjon. Feilsøking i programvaren.
+12:07 til 16:01
